@@ -7,10 +7,10 @@ Pages site for Illinois Interactive (.org) — the temporary home while the full
 A single-page placeholder:
 
 - `index.html` — hero, "What we'll be" cards, "What's next" roadmap, contact
-- `styles.css` — dark theme (prairie gold + signal teal), responsive, `prefers-reduced-motion` aware
-- `main.js` — scroll reveals + a gentle pointer-aware node-network canvas background
+- `styles.css` — dark theme (prairie gold + signal teal) with 8-bit accents (Press Start 2P, hard offset shadows, square corners), responsive, `prefers-reduced-motion` aware
+- `main.js` — scroll reveals + a pointer-aware canvas "playfield": pixel nodes and drifting 8-bit sprites (heart, invader, gem)
 
-Pure vanilla HTML/CSS/JS. No build step, no dependencies beyond a Google Fonts stylesheet (Space Grotesk) with system-font fallbacks.
+Pure vanilla HTML/CSS/JS. No build step, no dependencies beyond a Google Fonts stylesheet (Space Grotesk + Press Start 2P) with system-font fallbacks.
 
 ## Contact
 

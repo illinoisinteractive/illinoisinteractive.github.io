@@ -16,11 +16,11 @@
   <meta name="twitter:card" content="summary" />
 
   <!-- Favicon: the three-node mark -->
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230a0d14'/%3E%3Cpath d='M9 22 L16 9 L23 20 Z' fill='none' stroke='%23ffc857' stroke-width='2' stroke-linejoin='round'/%3E%3Ccircle cx='9' cy='22' r='2.8' fill='%236fd5c6'/%3E%3Ccircle cx='16' cy='9' r='2.8' fill='%23ffc857'/%3E%3Ccircle cx='23' cy='20' r='2.8' fill='%236fd5c6'/%3E%3C/svg%3E" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%230a0d14'/%3E%3Cpath d='M9 21 L16 9 L23 19' fill='none' stroke='%23ffc857' stroke-width='2'/%3E%3Crect x='6' y='18' width='6' height='6' fill='%236fd5c6'/%3E%3Crect x='13' y='6' width='6' height='6' fill='%23ffc857'/%3E%3Crect x='20' y='16' width='6' height='6' fill='%236fd5c6'/%3E%3C/svg%3E" />
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
 
   <script>document.documentElement.classList.add('js');</script>
@@ -33,10 +33,10 @@
   <header class="site-header">
     <a class="wordmark" href="#top" aria-label="Illinois Interactive — home">
       <svg class="mark" viewBox="0 0 32 32" aria-hidden="true">
-        <path d="M8 22 L16 9 L24 19" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" />
-        <circle cx="8" cy="22" r="2.6" fill="#6fd5c6" />
-        <circle cx="16" cy="9" r="2.6" fill="#ffc857" />
-        <circle cx="24" cy="19" r="2.6" fill="#6fd5c6" />
+        <path d="M9 21 L16 9 L23 19" fill="none" stroke="currentColor" stroke-width="2" />
+        <rect x="6" y="18" width="6" height="6" fill="#6fd5c6" />
+        <rect x="13" y="6" width="6" height="6" fill="#ffc857" />
+        <rect x="20" y="16" width="6" height="6" fill="#6fd5c6" />
       </svg>
       <span>Illinois&nbsp;Interactive</span>
     </a>
@@ -59,6 +59,7 @@
           <a class="btn btn-solid" href="mailto:illinoisinteract@gmail.com">Get in touch</a>
           <a class="btn btn-ghost" href="#next">Watch this space</a>
         </div>
+        <p class="arcade-line" data-reveal>Player 1 &middot; You &mdash; no coins required</p>
       </div>
     </section>
 
@@ -111,16 +112,19 @@
         <ol class="roadmap">
           <li class="milestone is-now" data-reveal>
             <span class="dot" aria-hidden="true"></span>
+            <span class="lvl" aria-hidden="true">Lvl 01</span>
             <h3>Now</h3>
             <p>Laying the groundwork — meeting, organizing, and choosing the tools we'll build with.</p>
           </li>
           <li class="milestone" data-reveal>
             <span class="dot" aria-hidden="true"></span>
+            <span class="lvl" aria-hidden="true">Lvl 02</span>
             <h3>Soon</h3>
             <p>Our first community event — a build night. Dates coming; say hello if you want in.</p>
           </li>
           <li class="milestone" data-reveal>
             <span class="dot" aria-hidden="true"></span>
+            <span class="lvl" aria-hidden="true">Lvl 03</span>
             <h3>Then</h3>
             <p>Regular programs — recurring circles, workshops, and partnerships across the state.</p>
           </li>
@@ -134,7 +138,7 @@
         <p class="lede contact-lede" data-reveal>
           This is the temporary home — the real site is on its way. Until then, the door is open:
         </p>
-        <a class="mail" href="mailto:illinoisinteract@gmail.com" data-reveal>illinoisinteract@gmail.com</a>
+        <a class="mail" href="mailto:illinoisinteract@gmail.com" data-reveal>illinoisinteract@gmail.com<span class="cursor" aria-hidden="true">&#9646;</span></a>
       </div>
     </section>
   </main>
