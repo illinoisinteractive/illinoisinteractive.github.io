@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Illinois Interactive — A community for game development &amp; interactive media</title>
+  <meta name="description" content="Illinois Interactive is a brand-new community organization centered on game development and interactive media — the vehicles for storytelling, education, and play. We're building the real site; watch this space." />
+  <meta name="theme-color" content="#0a0d14" />
+
+  <!-- Open Graph / social -->
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Illinois Interactive" />
+  <meta property="og:title" content="Illinois Interactive" />
+  <meta property="og:description" content="A community for game development & interactive media — where people in Illinois build stories you can play." />
+  <meta property="og:url" content="https://illinoisinteractive.github.io/" />
+  <meta name="twitter:card" content="summary" />
+
+  <!-- Favicon: the three-node mark -->
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230a0d14'/%3E%3Cpath d='M9 22 L16 9 L23 20 Z' fill='none' stroke='%23ffc857' stroke-width='2' stroke-linejoin='round'/%3E%3Ccircle cx='9' cy='22' r='2.8' fill='%236fd5c6'/%3E%3Ccircle cx='16' cy='9' r='2.8' fill='%23ffc857'/%3E%3Ccircle cx='23' cy='20' r='2.8' fill='%236fd5c6'/%3E%3C/svg%3E" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+
+  <script>document.documentElement.classList.add('js');</script>
+  <script src="main.js" defer></script>
+</head>
+<body>
+  <canvas id="net" aria-hidden="true"></canvas>
+  <div class="scrim" aria-hidden="true"></div>
+
+  <header class="site-header">
+    <a class="wordmark" href="#top" aria-label="Illinois Interactive — home">
+      <svg class="mark" viewBox="0 0 32 32" aria-hidden="true">
+        <path d="M8 22 L16 9 L24 19" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" />
+        <circle cx="8" cy="22" r="2.6" fill="#6fd5c6" />
+        <circle cx="16" cy="9" r="2.6" fill="#ffc857" />
+        <circle cx="24" cy="19" r="2.6" fill="#6fd5c6" />
+      </svg>
+      <span>Illinois&nbsp;Interactive</span>
+    </a>
+    <a class="btn btn-ghost btn-sm" href="mailto:illinoisinteract@gmail.com">Get in touch</a>
+  </header>
+
+  <main id="top">
+    <section class="hero">
+      <div class="wrap">
+        <p class="eyebrow" data-reveal>Est. 2026 · A community in Illinois</p>
+        <h1 class="hero-title" data-reveal>
+          Where Illinois builds<br />
+          <em>stories you can play.</em>
+        </h1>
+        <p class="lede" data-reveal>
+          Illinois Interactive is a community for game development &amp; interactive media —
+          the vehicles for storytelling, education, and play.
+        </p>
+        <div class="actions" data-reveal>
+          <a class="btn btn-solid" href="mailto:illinoisinteract@gmail.com">Get in touch</a>
+          <a class="btn btn-ghost" href="#next">Watch this space</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="about">
+      <div class="wrap">
+        <h2 class="section-title" data-reveal>What we'll be</h2>
+        <p class="section-sub" data-reveal>Three rooms in the house we're raising together.</p>
+        <div class="cards">
+          <article class="card" data-reveal>
+            <div class="icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M6.5 8h11A4.5 4.5 0 0 1 22 12.5v.5a3.5 3.5 0 0 1-6.4 1.8l-1.1-1.8h-5l-1.1 1.8A3.5 3.5 0 0 1 2 13v-.5A4.5 4.5 0 0 1 6.5 8Z" />
+                <path d="M8 11v3M6.5 12.5h3" />
+                <path d="M16.5 11.5h.01M18.5 13.5h.01" />
+              </svg>
+            </div>
+            <h3>Game Development</h3>
+            <p>Build nights, dev circles, and honest playtesting — where ideas become things you can actually play.</p>
+          </article>
+
+          <article class="card" data-reveal>
+            <div class="icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M3 12h3l2.5-6 4 12 2.5-6H21" />
+              </svg>
+            </div>
+            <h3>Interactive Media</h3>
+            <p>Interactive art, installations, and new media — experiences that listen, respond, and change with you.</p>
+          </article>
+
+          <article class="card" data-reveal>
+            <div class="icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2Z" />
+                <path d="M9.5 7h5" />
+              </svg>
+            </div>
+            <h3>Storytelling &amp; Education</h3>
+            <p>Workshops, mentorship, and classroom partnerships — skills shared and stories taught, across Illinois.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="next">
+      <div class="wrap">
+        <h2 class="section-title" data-reveal>What's next</h2>
+        <p class="section-sub" data-reveal>No promises and no press releases — just where we're heading.</p>
+        <ol class="roadmap">
+          <li class="milestone is-now" data-reveal>
+            <span class="dot" aria-hidden="true"></span>
+            <h3>Now</h3>
+            <p>Laying the groundwork — meeting, organizing, and choosing the tools we'll build with.</p>
+          </li>
+          <li class="milestone" data-reveal>
+            <span class="dot" aria-hidden="true"></span>
+            <h3>Soon</h3>
+            <p>Our first community event — a build night. Dates coming; say hello if you want in.</p>
+          </li>
+          <li class="milestone" data-reveal>
+            <span class="dot" aria-hidden="true"></span>
+            <h3>Then</h3>
+            <p>Regular programs — recurring circles, workshops, and partnerships across the state.</p>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <section class="section contact" id="contact">
+      <div class="wrap">
+        <h2 class="section-title" data-reveal>Say hello</h2>
+        <p class="lede contact-lede" data-reveal>
+          This is the temporary home — the real site is on its way. Until then, the door is open:
+        </p>
+        <a class="mail" href="mailto:illinoisinteract@gmail.com" data-reveal>illinoisinteract@gmail.com</a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap footer-row">
+      <p>&copy; 2026 Illinois Interactive</p>
+      <p class="foot-note">A community for game development &amp; interactive media · Hosted on GitHub Pages</p>
+    </div>
+  </footer>
+</body>
+</html>

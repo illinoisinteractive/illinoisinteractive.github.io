@@ -1,0 +1,502 @@
+/* ============================================================
+   Illinois Interactive — temporary home
+   Dark network canvas · prairie gold · signal teal
+   ============================================================ */
+
+:root {
+  --bg: #0a0d14;
+  --surface: rgba(18, 25, 40, 0.62);
+  --border: rgba(233, 237, 245, 0.1);
+  --text: #e9edf5;
+  --muted: #9aa5b8;
+  --gold: #ffc857;
+  --gold-soft: rgba(255, 200, 87, 0.35);
+  --teal: #6fd5c6;
+  --font-display: "Space Grotesk", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-body: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --radius: 14px;
+  --max-w: 1080px;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font: 400 1rem/1.6 var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow-x: hidden;
+}
+
+::selection {
+  background: var(--gold-soft);
+  color: #fff;
+}
+
+:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+.wrap {
+  max-width: var(--max-w);
+  margin: 0 auto;
+}
+
+/* ---------- Background layers ---------- */
+
+#net {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background:
+    radial-gradient(120% 70% at 50% 0%, rgba(10, 13, 20, 0) 0%, rgba(10, 13, 20, 0.4) 65%),
+    linear-gradient(180deg, rgba(10, 13, 20, 0.15) 0%, rgba(10, 13, 20, 0.45) 45%, rgba(10, 13, 20, 0.82) 100%);
+}
+
+header,
+main,
+footer {
+  position: relative;
+  z-index: 2;
+}
+
+/* ---------- Header ---------- */
+
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.85rem 1.5rem;
+  background: linear-gradient(180deg, rgba(10, 13, 20, 0.72), rgba(10, 13, 20, 0.4));
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(233, 237, 245, 0.06);
+}
+
+.wordmark {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+  color: var(--text);
+  text-decoration: none;
+  font: 500 1.05rem/1 var(--font-display);
+  letter-spacing: 0.01em;
+}
+
+.wordmark .mark {
+  width: 26px;
+  height: 26px;
+  color: var(--gold);
+  flex: none;
+}
+
+.wordmark:hover .mark {
+  filter: drop-shadow(0 0 6px rgba(255, 200, 87, 0.6));
+}
+
+/* ---------- Buttons ---------- */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font: 500 0.95rem/1 var(--font-display);
+  letter-spacing: 0.01em;
+  padding: 0.85rem 1.55rem;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  text-decoration: none;
+  cursor: pointer;
+  transition:
+    transform 0.18s ease,
+    box-shadow 0.18s ease,
+    background 0.18s ease,
+    border-color 0.18s ease,
+    color 0.18s ease;
+}
+
+.btn-sm {
+  padding: 0.55rem 1.05rem;
+  font-size: 0.88rem;
+}
+
+.btn-solid {
+  background: var(--gold);
+  color: #17110a;
+}
+
+.btn-solid:hover {
+  background: #ffd47a;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 32px rgba(255, 200, 87, 0.28);
+}
+
+.btn-ghost {
+  border-color: var(--border);
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.btn-ghost:hover {
+  border-color: rgba(255, 200, 87, 0.5);
+  color: var(--gold);
+}
+
+/* ---------- Hero ---------- */
+
+.hero {
+  min-height: min(88svh, 880px);
+  display: flex;
+  align-items: center;
+  padding: 6rem 1.5rem 5rem;
+}
+
+.eyebrow {
+  margin: 0 0 1.4rem;
+  font: 500 0.8rem/1 var(--font-display);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--teal);
+}
+
+.hero-title {
+  margin: 0 0 1.6rem;
+  font: 700 clamp(2.7rem, 8vw, 5.2rem)/1.02 var(--font-display);
+  letter-spacing: -0.02em;
+}
+
+.hero-title em {
+  font-style: normal;
+  color: var(--gold);
+}
+
+.lede {
+  margin: 0 0 2.4rem;
+  max-width: 46ch;
+  font-size: 1.15rem;
+  line-height: 1.65;
+  color: var(--muted);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.9rem;
+}
+
+/* ---------- Sections ---------- */
+
+.section {
+  padding: 5.5rem 1.5rem;
+}
+
+.section-title {
+  margin: 0 0 0.6rem;
+  font: 700 clamp(1.8rem, 3.6vw, 2.4rem)/1.1 var(--font-display);
+  letter-spacing: -0.015em;
+}
+
+.section-sub {
+  margin: 0;
+  color: var(--muted);
+  max-width: 52ch;
+}
+
+/* ---------- Cards ---------- */
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.25rem;
+  margin-top: 2.6rem;
+}
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.8rem 1.55rem 1.95rem;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  transition:
+    transform 0.22s ease,
+    border-color 0.22s ease,
+    box-shadow 0.22s ease;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(255, 200, 87, 0.35);
+  box-shadow: 0 18px 44px rgba(0, 0, 0, 0.35);
+}
+
+.card .icon {
+  width: 46px;
+  height: 46px;
+  display: grid;
+  place-items: center;
+  margin-bottom: 1.15rem;
+  border-radius: 12px;
+  background: rgba(111, 213, 198, 0.08);
+  border: 1px solid rgba(111, 213, 198, 0.28);
+  color: var(--teal);
+}
+
+.card .icon svg {
+  width: 24px;
+  height: 24px;
+}
+
+.card h3 {
+  margin: 0 0 0.55rem;
+  font: 600 1.18rem/1.2 var(--font-display);
+}
+
+.card p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.96rem;
+  line-height: 1.62;
+}
+
+/* ---------- Roadmap ---------- */
+
+.roadmap {
+  list-style: none;
+  margin: 2.8rem 0 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2.5rem;
+  position: relative;
+}
+
+.roadmap::before {
+  content: "";
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  right: 5px;
+  height: 1px;
+  background: linear-gradient(90deg, var(--gold) 0%, rgba(111, 213, 198, 0.45) 45%, rgba(233, 237, 245, 0.12) 100%);
+}
+
+.milestone {
+  position: relative;
+}
+
+.milestone .dot {
+  display: block;
+  width: 11px;
+  height: 11px;
+  margin-bottom: 1.15rem;
+  border-radius: 50%;
+  border: 2px solid var(--muted);
+  background: var(--bg);
+}
+
+.milestone.is-now .dot {
+  border-color: var(--gold);
+  background: var(--gold);
+}
+
+.milestone.is-now .dot::after {
+  content: "";
+  position: absolute;
+  left: -1px;
+  top: -1px;
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  border: 2px solid var(--gold);
+  animation: pulse 2.4s ease-out infinite;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(3.2);
+    opacity: 0;
+  }
+}
+
+.milestone h3 {
+  margin: 0 0 0.45rem;
+  font: 600 1.05rem/1.2 var(--font-display);
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+.milestone:not(.is-now) h3 {
+  color: var(--teal);
+}
+
+.milestone p {
+  margin: 0;
+  max-width: 30ch;
+  color: var(--muted);
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+/* ---------- Contact ---------- */
+
+.contact-lede {
+  margin-bottom: 1.6rem;
+}
+
+.mail {
+  display: inline-block;
+  font: 500 clamp(1.35rem, 4.5vw, 2.1rem)/1.2 var(--font-display);
+  letter-spacing: -0.01em;
+  color: var(--gold);
+  text-decoration: none;
+  border-bottom: 2px solid rgba(255, 200, 87, 0.35);
+  padding-bottom: 0.15rem;
+  transition: border-color 0.2s ease, text-shadow 0.2s ease;
+  word-break: break-all;
+}
+
+.mail:hover {
+  border-color: var(--gold);
+  text-shadow: 0 0 24px rgba(255, 200, 87, 0.45);
+}
+
+/* ---------- Footer ---------- */
+
+.site-footer {
+  border-top: 1px solid rgba(233, 237, 245, 0.07);
+  padding: 1.8rem 1.5rem 2.2rem;
+  background: rgba(10, 13, 20, 0.55);
+}
+
+.footer-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.6rem 1.5rem;
+}
+
+.site-footer p {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+/* ---------- Reveal on scroll ---------- */
+
+html.js [data-reveal] {
+  opacity: 0;
+  transform: translateY(16px);
+  transition:
+    opacity 0.65s ease,
+    transform 0.65s ease;
+}
+
+html.js [data-reveal].is-revealed {
+  opacity: 1;
+  transform: none;
+}
+
+/* ---------- Responsive ---------- */
+
+@media (max-width: 900px) {
+  .cards {
+    grid-template-columns: 1fr;
+    max-width: 520px;
+  }
+}
+
+@media (max-width: 720px) {
+  .section {
+    padding: 4rem 1.25rem;
+  }
+
+  .hero {
+    padding: 4.5rem 1.25rem 3.5rem;
+  }
+
+  .roadmap {
+    grid-template-columns: 1fr;
+    gap: 2.4rem;
+  }
+
+  .roadmap::before {
+    left: 5px;
+    right: auto;
+    top: 6px;
+    bottom: 6px;
+    width: 1px;
+    height: auto;
+    background: linear-gradient(180deg, var(--gold) 0%, rgba(111, 213, 198, 0.45) 50%, rgba(233, 237, 245, 0.12) 100%);
+  }
+
+  .milestone {
+    padding-left: 1.8rem;
+  }
+
+  .milestone .dot {
+    position: absolute;
+    left: 0;
+    top: 4px;
+    margin-bottom: 0;
+  }
+
+  .milestone p {
+    max-width: none;
+  }
+}
+
+/* ---------- Reduced motion ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  html.js [data-reveal] {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+
+  .milestone.is-now .dot::after {
+    display: none;
+  }
+
+  .btn,
+  .card,
+  .mail {
+    transition: none;
+  }
+}
