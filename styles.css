@@ -513,11 +513,15 @@ footer {
 }
 
 .footer-row {
+  /* Stacked on purpose: the foot-note is set in Press Start 2P, a
+     square monospace whose real width is ~2x the fallback font's.
+     Side-by-side, the two lines only fit when the webfont FAILS to
+     load — so we stack them and let each take the full column. Both
+     renderers (real font / fallback) now look the same. */
   display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.6rem 1.5rem;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.7rem;
 }
 
 .site-footer p {
