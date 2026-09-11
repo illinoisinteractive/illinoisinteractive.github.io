@@ -4,7 +4,7 @@
    2) Canvas background — two swappable engines, same palette:
         "net"  (default)  pixel nodes, links, drifting sprites
         "fall" (?bg=fall) falling pixel pieces — tetrominoes, fragments,
-                        8-bit power-ups; size-varied for depth
+                        power-ups, rocks & a steering ship; size-varied for depth
    Pointer-aware, reduced-motion aware.
    ============================================================ */
 (() => {
@@ -258,7 +258,8 @@
   }
 
   /* ==========================================================
-     Engine B — fall: drifting tetrominoes + pixel fragments
+     Engine B — fall: tumbling pieces, power-ups, rocks,
+     and one little player-ship that steers instead of falling
      ========================================================== */
   function initFall() {
     /* Rotatable blocks: tetrominoes (indices 0–6), loose fragments (7–10).
@@ -314,23 +315,73 @@
       },
     ];
 
+    /* Tumbling rocks — a rock is a rock; zero risk, maximum mood. */
+    const ROCKS = [
+      { map: ["..###..", ".#####.", "#######", "#######", ".#####.", "..###.."] },
+      { map: [".#####..", "#######.", "########", ".######.", "..####.."] },
+    ];
+
+    /* The little player-ship: a notched triangle — a generic geometric
+       form, 1979-flavored but abstract. It doesn't fall: it steers,
+       wraps at every edge, and dodges your cursor. */
+    const SHIP = {
+      map: [
+        "....#....",
+        "...###...",
+        "..#####..",
+        ".#######.",
+        "#.#####.#",
+        ".#.###.#.",
+        ".........",
+        ".........",
+        ".........",
+      ],
+    };
+
+    /* Precompute 90° orientations for string maps (padded to a square
+       in both dimensions). */
+    function mapOrients(map) {
+      const size = Math.max(map.length, ...map.map((r) => r.length));
+      const rows = [];
+      for (let y = 0; y < size; y++) rows.push((map[y] || "").padEnd(size, "."));
+      let cur = rows;
+      const orients = [];
+      for (let k = 0; k < 4; k++) {
+        orients.push(cur);
+        cur = cur.map((row, y) => cur.map((col, x) => cur[size - 1 - x][y]).join(""));
+      }
+      return orients;
+    }
+
+    const powerups = POWERUPS.map((d) => {
+      const m = d.map.map((r) => r.padEnd(d.map[0].length, "."));
+      return { map: m, orients: [m, m, m, m] }; // stay upright (readable)
+    });
+    const rocks = ROCKS.map((d) => ({ map: d.map, orients: mapOrients(d.map) }));
+    const shipDef = { map: SHIP.map, orients: mapOrients(SHIP.map) };
+
+    const DIRS = [[0, -1], [1, 0], [0, 1], [-1, 0]]; // ship headings
+
     const SCALES = [0.6, 0.85, 1, 1.3, 1.6];
 
-    let pieces = [];
+    let pool = [];
+    let ship = null;
 
-    function pieceCount() {
+    function poolCount() {
       return Math.round(Math.min(15, Math.max(8, (w * h) / 100000)));
     }
 
     function makePiece(anywhere) {
-      // ~35% tetrominoes, ~35% loose fragments, ~30% power-ups.
+      // ~30% tetrominoes, ~35% fragments, ~15% rocks, ~20% power-ups.
       const roll = Math.random();
       const shape =
-        roll < 0.35
-          ? { kind: "block", def: blocks[(Math.random() * 7) | 0] }
-          : roll < 0.7
-          ? { kind: "block", def: blocks[7 + ((Math.random() * 4) | 0)] }
-          : { kind: "map", def: POWERUPS[(Math.random() * POWERUPS.length) | 0] };
+        roll < 0.3
+          ? { kind: "block", rotates: true, def: blocks[(Math.random() * 7) | 0] }
+          : roll < 0.65
+          ? { kind: "block", rotates: true, def: blocks[7 + ((Math.random() * 4) | 0)] }
+          : roll < 0.8
+          ? { kind: "map", rotates: true, def: rocks[(Math.random() * rocks.length) | 0] }
+          : { kind: "map", rotates: false, def: powerups[(Math.random() * powerups.length) | 0] };
 
       // Size doubles as a depth cue: small & faint = far, big & bright = near.
       const scale = SCALES[(Math.random() * SCALES.length) | 0];
@@ -360,14 +411,76 @@
       };
     }
 
+    /* The one denizen that doesn't fall: gold, mid-size, always aboard. */
+    function makeShip() {
+      const cell = 5;
+      const gap = 1;
+      const box = shipDef.map[0].length * (cell + gap);
+      const s = {
+        shape: { kind: "map", rotates: true, def: shipDef },
+        orient: (Math.random() * 4) | 0,
+        rotateIn: 100 + Math.random() * 200,
+        cell,
+        gap,
+        pw: box,
+        ph: box,
+        x: Math.random() * Math.max(w - box, 1),
+        y: Math.random() * Math.max(h - box, 1),
+        vx: 0,
+        vy: 0,
+        gold: true,
+        a: 0.5,
+        ship: true,
+      };
+      const speed = 0.3;
+      s.vx = DIRS[s.orient][0] * speed;
+      s.vy = DIRS[s.orient][1] * speed;
+      return s;
+    }
+
     function seed(anywhere) {
-      const n = pieceCount();
-      pieces = [];
-      for (let i = 0; i < n; i++) pieces.push(makePiece(anywhere));
+      const n = poolCount();
+      pool = [];
+      for (let i = 0; i < n; i++) pool.push(makePiece(anywhere));
+      if (!ship) ship = makeShip();
+    }
+
+    function repel(p) {
+      if (!pointer.active || !finePointer) return;
+      const cx = p.x + p.pw / 2;
+      const cy = p.y + p.ph / 2;
+      const dx = cx - pointer.x;
+      const dy = cy - pointer.y;
+      const d2 = dx * dx + dy * dy;
+      const reach = POINTER_R + Math.max(p.pw, p.ph) / 2;
+      if (d2 < reach * reach && d2 > 0.01) {
+        const d = Math.sqrt(d2);
+        const force = (1 - d / reach) * 1.3;
+        p.x += (dx / d) * force;
+        p.y += (dy / d) * force;
+      }
+    }
+
+    /* The ship re-aims periodically; near the cursor, it dodges. */
+    function steerShip(p) {
+      if (pointer.active && finePointer) {
+        const dx = p.x + p.pw / 2 - pointer.x;
+        const dy = p.y + p.ph / 2 - pointer.y;
+        const ranked = [0, 1, 2, 3].sort(
+          (a, b) =>
+            DIRS[b][0] * dx + DIRS[b][1] * dy - (DIRS[a][0] * dx + DIRS[a][1] * dy)
+        );
+        p.orient = Math.random() < 0.6 ? ranked[0] : (Math.random() * 4) | 0;
+      } else if (Math.random() < 0.5) {
+        p.orient = (p.orient + 1) % 4; // slow orbit
+      }
+      const speed = 0.25 + Math.random() * 0.3;
+      p.vx = DIRS[p.orient][0] * speed;
+      p.vy = DIRS[p.orient][1] * speed;
     }
 
     step = function () {
-      for (const p of pieces) {
+      for (const p of pool) {
         p.x += p.vx;
         p.y += p.vy;
 
@@ -381,8 +494,8 @@
           continue;
         }
 
-        // Tetrominoes snap-rotate; power-ups stay upright (readable)
-        if (p.shape.kind === "block") {
+        // Tetrominoes & rocks tumble; power-ups stay upright (readable)
+        if (p.shape.rotates) {
           p.rotateIn -= 1;
           if (p.rotateIn <= 0) {
             p.orient = (p.orient + 1) % 4;
@@ -390,51 +503,57 @@
           }
         }
 
-        // Gentle pointer repulsion — pieces are heavier than pixels
-        if (pointer.active && finePointer) {
-          const cx = p.x + p.pw / 2;
-          const cy = p.y + p.ph / 2;
-          const dx = cx - pointer.x;
-          const dy = cy - pointer.y;
-          const d2 = dx * dx + dy * dy;
-          const reach = POINTER_R + Math.max(p.pw, p.ph) / 2;
-          if (d2 < reach * reach && d2 > 0.01) {
-            const d = Math.sqrt(d2);
-            const force = (1 - d / reach) * 1.3;
-            p.x += (dx / d) * force;
-            p.y += (dy / d) * force;
-          }
+        repel(p);
+      }
+
+      // The ship: the one thing in the field that doesn't fall
+      if (ship) {
+        ship.x += ship.vx;
+        ship.y += ship.vy;
+        if (ship.x < -ship.pw) ship.x = w;
+        else if (ship.x > w) ship.x = -ship.pw;
+        if (ship.y < -ship.ph) ship.y = h;
+        else if (ship.y > h) ship.y = -ship.ph;
+        ship.rotateIn -= 1;
+        if (ship.rotateIn <= 0) {
+          steerShip(ship);
+          ship.rotateIn = 120 + Math.random() * 240;
         }
+        repel(ship);
       }
     };
 
-    draw = function () {
-      ctx.clearRect(0, 0, w, h);
-      for (const p of pieces) {
-        ctx.fillStyle =
-          "rgba(" + (p.gold ? GOLD : TEAL) + ", " + p.a.toFixed(3) + ")";
-        const ox = Math.round(p.x);
-        const oy = Math.round(p.y);
-        const stride = p.cell + p.gap;
-        if (p.shape.kind === "block") {
-          for (const [cx, cy] of p.shape.def.orients[p.orient]) {
-            ctx.fillRect(ox + cx * stride, oy + cy * stride, p.cell, p.cell);
-          }
-        } else {
-          for (let r = 0; r < p.shape.def.map.length; r++) {
-            const row = p.shape.def.map[r];
-            for (let c = 0; c < row.length; c++) {
-              if (row.charAt(c) === "#") {
-                ctx.fillRect(ox + c * stride, oy + r * stride, p.cell, p.cell);
-              }
+    function drawPiece(p) {
+      ctx.fillStyle =
+        "rgba(" + (p.gold ? GOLD : TEAL) + ", " + p.a.toFixed(3) + ")";
+      const ox = Math.round(p.x);
+      const oy = Math.round(p.y);
+      const stride = p.cell + p.gap;
+      if (p.shape.kind === "block") {
+        for (const [cx, cy] of p.shape.def.orients[p.orient]) {
+          ctx.fillRect(ox + cx * stride, oy + cy * stride, p.cell, p.cell);
+        }
+      } else {
+        const map = p.shape.def.orients[p.orient];
+        for (let r = 0; r < map.length; r++) {
+          const row = map[r];
+          for (let c = 0; c < row.length; c++) {
+            if (row.charAt(c) === "#") {
+              ctx.fillRect(ox + c * stride, oy + r * stride, p.cell, p.cell);
             }
           }
         }
       }
+    }
+
+    draw = function () {
+      ctx.clearRect(0, 0, w, h);
+      for (const p of pool) drawPiece(p);
+      if (ship) drawPiece(ship); // the player-ship draws on top
     };
 
     onResize = function () {
-      if (pieces.length !== pieceCount()) seed(true);
+      if (pool.length !== poolCount()) seed(true);
     };
   }
 
