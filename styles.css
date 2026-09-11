@@ -119,8 +119,9 @@ footer {
 }
 
 .wordmark .mark {
-  width: 26px;
-  height: 26px;
+  /* 32-unit viewBox; rendered 25% larger for presence in the header */
+  width: 32.5px;
+  height: 32.5px;
   color: var(--gold);
   flex: none;
 }
