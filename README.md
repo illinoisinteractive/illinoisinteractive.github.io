@@ -8,7 +8,7 @@ A single-page placeholder:
 
 - `index.html` — hero, "What we'll be" cards, "What's next" roadmap, contact
 - `styles.css` — dark theme (prairie gold + signal teal) with 8-bit accents (Press Start 2P, hard offset shadows, square corners), responsive, `prefers-reduced-motion` aware
-- `main.js` — scroll reveals + a pointer-aware canvas "playfield": pixel nodes and drifting 8-bit sprites (heart, invader, gem)
+- `main.js` — scroll reveals + a pointer-aware canvas "playfield". Two swappable background engines share the palette: pixel nodes with drifting 8-bit sprites (default), or falling tetrominoes + pixel fragments — open `index.html?bg=fall` to preview the alternate
 
 Pure vanilla HTML/CSS/JS. No build step, no dependencies beyond a Google Fonts stylesheet (Space Grotesk + Press Start 2P) with system-font fallbacks.
 
