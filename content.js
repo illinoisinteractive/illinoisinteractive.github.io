@@ -63,6 +63,11 @@
   }
 
   startRotation();
+  if ("fonts" in document) {
+    // The first reservation measured against the fallback font; re-measure
+    // once the webfont has actually landed so the reserved width is true.
+    document.fonts.ready.then(reserveWidth);
+  }
   window.addEventListener(
     "resize",
     () => {

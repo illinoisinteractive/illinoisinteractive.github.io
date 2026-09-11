@@ -51,6 +51,10 @@ body {
 }
 
 .wrap {
+  /* Explicit width: inside the flex hero the column would otherwise
+     size to its widest line and re-center on every content change
+     (the whole block slides). Fixed box = stable left edge. */
+  width: 100%;
   max-width: var(--max-w);
   margin: 0 auto;
 }

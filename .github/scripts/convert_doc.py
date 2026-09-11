@@ -18,16 +18,24 @@ Safety:
 Usage:
   python3 convert_doc.py                 # fetch from Google, write JSON
   python3 convert_doc.py --from-file X   # parse a saved export (for tests)
+
+DOC_ID accepts the bare ID or the whole address-bar URL. It must be the
+Doc's EDIT url (docs.google.com/document/d/<ID>/edit). The "/pub" viewer
+link that some Google menus offer does NOT work with the export endpoint
+and is rejected with a helpful message.
 """
 import json
 import re
 import sys
+import urllib.error
 import urllib.request
 from datetime import datetime, timezone
 from html.parser import HTMLParser
 from pathlib import Path
 
-# The middle of the Doc's URL:  docs.google.com/document/d/<DOC_ID>/edit
+# What to paste in here: the Doc's address-bar URL (or just the ID),
+# i.e. the EDIT url — not the "/pub" viewer link:
+#   https://docs.google.com/document/d/ADFN-cskk.../edit?usp=sharing
 DOC_ID = "REPLACE_WITH_DOC_ID"
 
 OUT = Path(__file__).resolve().parents[2] / "content" / "site-content.json"
@@ -40,6 +48,22 @@ VOID = {
 BLOCKS = {"p", "div", "h3", "h4", "h5", "li", "tr", "table"}
 HARD_SKIP = {"script", "style", "iframe", "noscript", "template"}
 SAFE_LINK = re.compile(r"^(https?:|mailto:)", re.I)
+
+
+def resolve_id(spec):
+    """Accept a bare doc ID or a full URL; return just the ID.
+
+    Handles both ID shapes: the canonical one (ADFN-...) and Google's
+    "e/2PACX-..." viewer IDs (which contain a slash, so we can't split
+    naively on "/").
+    """
+    spec = spec.strip()
+    m = re.search(r"/document/d/(.+?)(?:\?|$)", spec)
+    if m:
+        token = m.group(1)
+        token = re.sub(r"/(?:edit|pub|view|preview|mobilebasic|export).*$", "", token)
+        return token
+    return spec
 
 
 class Collector(HTMLParser):
@@ -157,15 +181,35 @@ def main():
         doc_html = path.read_text(encoding="utf-8")
         doc_id = "local-test"
     else:
-        if DOC_ID == "REPLACE_WITH_DOC_ID":
+        doc_id = resolve_id(DOC_ID)
+        if doc_id == "REPLACE_WITH_DOC_ID":
             print("Not configured: set DOC_ID in convert_doc.py. Nothing to do.")
             return 0
+        if doc_id.startswith("e/"):
+            print("DOC_ID is a /pub viewer link. Google's export endpoint "
+                  "only knows the doc's EDIT id — open the Doc, copy the "
+                  "address-bar URL (docs.google.com/document/d/<ID>/edit), "
+                  "and paste it into DOC_ID. Last content kept.")
+            return 0
         req = urllib.request.Request(
-            EXPORT_URL.format(DOC_ID),
+            EXPORT_URL.format(doc_id),
             headers={"User-Agent": "Mozilla/5.0 (Illinois Interactive content sync)"},
         )
-        doc_html = urllib.request.urlopen(req, timeout=30).read().decode("utf-8", "replace")
-        doc_id = DOC_ID
+        try:
+            doc_html = urllib.request.urlopen(req, timeout=30).read().decode("utf-8", "replace")
+        except urllib.error.HTTPError as err:
+            print(f"Google returned HTTP {err.code} for the doc export. Last content "
+                  "kept — check the URL and the share setting.")
+            return 0
+        except urllib.error.URLError as err:
+            print(f"Network error while fetching the doc: {err.reason}. Last content kept.")
+            return 0
+
+    # Google answers missing/unshared docs with a small error page, not a 404.
+    if "errorMessage" in doc_html or "does not exist" in doc_html:
+        print("Google reports this document does not exist or is no longer "
+              "shared. Last content kept — check the URL and the share setting.")
+        return 0
 
     collector = Collector()
     collector.feed(doc_html)
