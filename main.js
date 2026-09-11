@@ -373,7 +373,7 @@
       for (const p of pieces) {
         ctx.fillStyle =
           "rgba(" + (p.gold ? GOLD : TEAL) + ", " + p.a.toFixed(3) + ")";
-        const cells = p.shape.orient[p.orient];
+        const cells = p.shape.orients[p.orient];
         const ox = Math.round(p.x);
         const oy = Math.round(p.y);
         for (const [cx, cy] of cells) {
