@@ -3,7 +3,8 @@
    1) Scroll reveals (IntersectionObserver)
    2) Canvas background — two swappable engines, same palette:
         "net"  (default)  pixel nodes, links, drifting sprites
-        "fall" (?bg=fall) falling pixel pieces — tetrominoes + fragments
+        "fall" (?bg=fall) falling pixel pieces — tetrominoes, fragments,
+                        8-bit power-ups; size-varied for depth
    Pointer-aware, reduced-motion aware.
    ============================================================ */
 (() => {
@@ -260,14 +261,9 @@
      Engine B — fall: drifting tetrominoes + pixel fragments
      ========================================================== */
   function initFall() {
-    const CELL = 6;
-    const GAP = 2;
-    const STRIDE = CELL + GAP;
-
-    /* Tetrominoes first (indices 0–6), then loose fragments (7–10).
-       Each shape lives in a size×size box; orientations are
-       precomputed 90° clockwise steps. */
-    const SHAPES = [
+    /* Rotatable blocks: tetrominoes (indices 0–6), loose fragments (7–10).
+       Each lives in a size×size box; orientations precomputed in 90° steps. */
+    const BLOCKS = [
       { size: 4, cells: [[0, 0], [1, 0], [2, 0], [3, 0]] }, // I
       { size: 2, cells: [[0, 0], [1, 0], [0, 1], [1, 1]] }, // O
       { size: 3, cells: [[0, 0], [1, 0], [2, 0], [1, 1]] }, // T
@@ -275,13 +271,13 @@
       { size: 3, cells: [[0, 0], [1, 0], [1, 1], [2, 1]] }, // Z
       { size: 3, cells: [[0, 0], [0, 1], [1, 1], [2, 1]] }, // J
       { size: 3, cells: [[2, 0], [0, 1], [1, 1], [2, 1]] }, // L
-      { size: 1, cells: [[0, 0]] },                          // dust
-      { size: 2, cells: [[0, 0], [1, 0]] },                  // domino
-      { size: 2, cells: [[0, 0], [0, 1], [1, 1]] },          // corner
-      { size: 2, cells: [[0, 0], [1, 0], [0, 1]] },          // corner'
+      { size: 1, cells: [[0, 0]] },                        // dust
+      { size: 2, cells: [[0, 0], [1, 0]] },                // domino
+      { size: 2, cells: [[0, 0], [0, 1], [1, 1]] },        // corner
+      { size: 2, cells: [[0, 0], [1, 0], [0, 1]] },        // corner'
     ];
 
-    const shapes = SHAPES.map((s) => {
+    const blocks = BLOCKS.map((s) => {
       const orients = [];
       let cells = s.cells.map((c) => [c[0], c[1]]);
       for (let k = 0; k < 4; k++) {
@@ -291,32 +287,76 @@
       return { size: s.size, orients };
     });
 
+    /* Recognizable 8-bit power-ups — monochrome silhouettes of generic
+       forms (toadstool, sparkle, heart, ghost, gem). They nod to the
+       platformer genre without copying protected character artwork:
+       no faces, no trademark colors, no spots. */
+    const POWERUPS = [
+      {
+        // mushroom
+        map: ["..####..", ".######.", "########", "########", "..####..", "..####.."],
+      },
+      {
+        // sparkle / star
+        map: ["...#...", "..###..", ".#####.", "#######", ".#####.", "..###..", "...#..."],
+      },
+      {
+        // heart
+        map: [".##.##.", "#######", "#######", ".#####.", "..###..", "...#..."],
+      },
+      {
+        // ghost
+        map: [".######.", "########", "########", "########", "########", "##.##.##"],
+      },
+      {
+        // gem
+        map: [".###.", "#####", "#####", ".###.", "..#.."],
+      },
+    ];
+
+    const SCALES = [0.6, 0.85, 1, 1.3, 1.6];
+
     let pieces = [];
 
     function pieceCount() {
       return Math.round(Math.min(15, Math.max(8, (w * h) / 100000)));
     }
 
-    function pickShape() {
-      // More loose fragments than full blocks — "some" are tetrominoes.
-      if (Math.random() < 0.4) return shapes[(Math.random() * 7) | 0];
-      return shapes[7 + ((Math.random() * 4) | 0)];
-    }
-
     function makePiece(anywhere) {
-      const shape = pickShape();
-      const boxPx = shape.size * STRIDE;
-      const big = shape.size >= 3;
+      // ~35% tetrominoes, ~35% loose fragments, ~30% power-ups.
+      const roll = Math.random();
+      const shape =
+        roll < 0.35
+          ? { kind: "block", def: blocks[(Math.random() * 7) | 0] }
+          : roll < 0.7
+          ? { kind: "block", def: blocks[7 + ((Math.random() * 4) | 0)] }
+          : { kind: "map", def: POWERUPS[(Math.random() * POWERUPS.length) | 0] };
+
+      // Size doubles as a depth cue: small & faint = far, big & bright = near.
+      const scale = SCALES[(Math.random() * SCALES.length) | 0];
+      const cell = Math.max(2, Math.round(6 * scale));
+      const gap = cell >= 7 ? 2 : 1;
+      const stride = cell + gap;
+
+      const cols = shape.kind === "map" ? shape.def.map[0].length : shape.def.size;
+      const rows = shape.kind === "map" ? shape.def.map.length : shape.def.size;
+      const pw = cols * stride;
+      const ph = rows * stride;
+
       return {
         shape,
         orient: (Math.random() * 4) | 0,
         rotateIn: 240 + Math.random() * 600,
-        x: Math.random() * Math.max(w - boxPx, 1),
-        y: anywhere ? Math.random() * h : -boxPx - Math.random() * 140,
+        cell,
+        gap,
+        pw,
+        ph,
+        x: Math.random() * Math.max(w - pw, 1),
+        y: anywhere ? Math.random() * h : -ph - Math.random() * 140,
         vx: (Math.random() - 0.5) * 0.08,
-        vy: big ? 0.14 + Math.random() * 0.28 : 0.24 + Math.random() * 0.4,
+        vy: (0.12 + Math.random() * 0.25) * (0.5 + scale),
         gold: Math.random() < 0.25,
-        a: 0.2 + Math.random() * 0.5,
+        a: Math.min(0.75, (0.16 + Math.random() * 0.5) * (0.5 + 0.5 * scale)),
       };
     }
 
@@ -331,11 +371,9 @@
         p.x += p.vx;
         p.y += p.vy;
 
-        const boxPx = p.shape.size * STRIDE;
-
         // Wrap horizontally
-        if (p.x < -boxPx) p.x = w;
-        else if (p.x > w) p.x = -boxPx;
+        if (p.x < -p.pw) p.x = w;
+        else if (p.x > w) p.x = -p.pw;
 
         // Fell off the bottom — respawn above
         if (p.y > h + 40) {
@@ -343,21 +381,23 @@
           continue;
         }
 
-        // Occasional 90° snap rotation — the tetromino tick
-        p.rotateIn -= 1;
-        if (p.rotateIn <= 0) {
-          p.orient = (p.orient + 1) % 4;
-          p.rotateIn = 240 + Math.random() * 700;
+        // Tetrominoes snap-rotate; power-ups stay upright (readable)
+        if (p.shape.kind === "block") {
+          p.rotateIn -= 1;
+          if (p.rotateIn <= 0) {
+            p.orient = (p.orient + 1) % 4;
+            p.rotateIn = 240 + Math.random() * 700;
+          }
         }
 
         // Gentle pointer repulsion — pieces are heavier than pixels
         if (pointer.active && finePointer) {
-          const cx = p.x + boxPx / 2;
-          const cy = p.y + boxPx / 2;
+          const cx = p.x + p.pw / 2;
+          const cy = p.y + p.ph / 2;
           const dx = cx - pointer.x;
           const dy = cy - pointer.y;
           const d2 = dx * dx + dy * dy;
-          const reach = POINTER_R + boxPx / 2;
+          const reach = POINTER_R + Math.max(p.pw, p.ph) / 2;
           if (d2 < reach * reach && d2 > 0.01) {
             const d = Math.sqrt(d2);
             const force = (1 - d / reach) * 1.3;
@@ -373,16 +413,22 @@
       for (const p of pieces) {
         ctx.fillStyle =
           "rgba(" + (p.gold ? GOLD : TEAL) + ", " + p.a.toFixed(3) + ")";
-        const cells = p.shape.orients[p.orient];
         const ox = Math.round(p.x);
         const oy = Math.round(p.y);
-        for (const [cx, cy] of cells) {
-          ctx.fillRect(
-            ox + cx * STRIDE,
-            oy + cy * STRIDE,
-            CELL,
-            CELL
-          );
+        const stride = p.cell + p.gap;
+        if (p.shape.kind === "block") {
+          for (const [cx, cy] of p.shape.def.orients[p.orient]) {
+            ctx.fillRect(ox + cx * stride, oy + cy * stride, p.cell, p.cell);
+          }
+        } else {
+          for (let r = 0; r < p.shape.def.map.length; r++) {
+            const row = p.shape.def.map[r];
+            for (let c = 0; c < row.length; c++) {
+              if (row.charAt(c) === "#") {
+                ctx.fillRect(ox + c * stride, oy + r * stride, p.cell, p.cell);
+              }
+            }
+          }
         }
       }
     };
