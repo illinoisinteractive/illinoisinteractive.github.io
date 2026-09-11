@@ -224,16 +224,6 @@ footer {
   color: var(--gold);
 }
 
-/* Rotating hero word: reserve the widest word's width so the line
-   never reflows; crossfade on swap */
-.rotator {
-  display: inline-block;
-  transition: opacity 0.45s ease;
-}
-
-.rotator.is-fading {
-  opacity: 0;
-}
 
 .lede {
   margin: 0 0 2.4rem;
@@ -627,9 +617,5 @@ html.js [data-reveal].is-revealed {
 
   .mail .cursor {
     animation: none;
-  }
-
-  .rotator {
-    transition: none;
   }
 }
