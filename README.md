@@ -8,7 +8,7 @@ A single-page placeholder:
 
 - `index.html` — hero, "What we'll be" cards, "What's next" roadmap, contact
 - `styles.css` — dark theme (prairie gold + signal teal) with 8-bit accents (Press Start 2P, hard offset shadows, square corners), responsive, `prefers-reduced-motion` aware
-- `main.js` — scroll reveals + a pointer-aware canvas "playfield". Two swappable background engines share the palette: pixel nodes with drifting 8-bit sprites (default), or size-varied falling pieces — tetrominoes, pixel fragments, recognizable power-ups (mushroom, star, heart, ghost, gem) and tumbling rocks — plus a little player-ship that steers and dodges your cursor — open `index.html?bg=fall` to preview the alternate
+- `main.js` — scroll reveals + a pointer-aware canvas "playfield". Two swappable background engines share the palette: size-varied falling pieces — tetrominoes, pixel fragments, recognizable power-ups (mushroom, star, heart, ghost, gem) and tumbling rocks — plus a little player-ship that steers and dodges your cursor (default), or the archived first design — pixel nodes with drifting 8-bit sprites — open `index.html?bg=net` to revisit it
 
 - `content.js` + `content/site-content.json` — renders the "Latest" strip and contact email from synced Doc content (falls back to the static HTML)
 

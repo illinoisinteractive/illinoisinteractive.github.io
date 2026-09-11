@@ -2,9 +2,10 @@
    Illinois Interactive — temporary home
    1) Scroll reveals (IntersectionObserver)
    2) Canvas background — two swappable engines, same palette:
-        "net"  (default)  pixel nodes, links, drifting sprites
-        "fall" (?bg=fall) falling pixel pieces — tetrominoes, fragments,
+        "fall" (default)  falling pixel pieces — tetrominoes, fragments,
                         power-ups, rocks & a steering ship; size-varied for depth
+        "net"  (?bg=net)  archived first design: pixel nodes, links, sprites —
+                        still available if we ever want it back on stage
    Pointer-aware, reduced-motion aware.
    ============================================================ */
 (() => {
@@ -55,10 +56,10 @@
   let onResize = null;
 
   const mode =
-    new URLSearchParams(location.search).get("bg") === "fall" ? "fall" : "net";
+    new URLSearchParams(location.search).get("bg") === "net" ? "net" : "fall";
 
-  if (mode === "fall") initFall();
-  else initNet();
+  if (mode === "net") initNet();
+  else initFall();
 
   /* ==========================================================
      Engine A — constellation: pixel nodes, links, sprites
