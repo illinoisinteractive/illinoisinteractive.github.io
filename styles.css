@@ -242,6 +242,46 @@ footer {
   opacity: 0.75;
 }
 
+/* ---------- Announcement strip (Google Doc sync) ---------- */
+
+.announce {
+  padding: 2.75rem 1.5rem 1.5rem;
+}
+
+.announce-strip {
+  display: flex;
+  align-items: baseline;
+  gap: 1.1rem;
+  border: 2px solid var(--border);
+  border-radius: 0;
+  background: var(--surface);
+  box-shadow: 0 6px 0 rgba(0, 0, 0, 0.35);
+  padding: 1.15rem 1.3rem;
+}
+
+.announce-label {
+  flex: none;
+  font: 400 0.58rem/1 var(--font-pixel);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+.announce-strip p {
+  margin: 0;
+  font-size: 0.98rem;
+  line-height: 1.65;
+  color: var(--text);
+  white-space: pre-line;
+}
+
+@media (max-width: 600px) {
+  .announce-strip {
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+}
+
 /* ---------- Sections ---------- */
 
 .section {

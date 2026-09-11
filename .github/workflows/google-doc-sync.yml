@@ -1,0 +1,29 @@
+name: Google Doc sync
+
+# Pulls the shared Google Doc into content/site-content.json and commits it.
+# The site picks the change up on the next Pages deploy.
+on:
+  schedule:
+    - cron: "*/15 * * * *"
+  workflow_dispatch: {}
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Convert doc to content JSON
+        run: python3 .github/scripts/convert_doc.py
+
+      - name: Commit if changed
+        run: |
+          git config user.name "google-doc-sync[bot]"
+          git config user.email "sync@illinoisinteractive.bot"
+          if git diff --quiet -- content/site-content.json; then
+            echo "Content unchanged — nothing to commit."
+          else
+            git add content/site-content.json
+            git commit -m "chore(content): sync from Google Doc"
+            git push
+          fi
