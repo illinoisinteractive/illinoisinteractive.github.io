@@ -118,6 +118,12 @@ footer {
   text-transform: uppercase;
 }
 
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
 .wordmark .mark {
   /* 32-unit viewBox; rendered 25% larger for presence in the header */
   width: 32.5px;
@@ -244,6 +250,13 @@ footer {
 .actions .btn {
   white-space: normal;
   text-align: center;
+}
+
+@media (max-width: 600px) {
+  /* Full-width hero CTA on phones, like the strip button. */
+  .actions .btn {
+    width: 100%;
+  }
 }
 
 .arcade-line {
@@ -570,6 +583,16 @@ html.js [data-reveal].is-revealed {
 }
 
 @media (max-width: 720px) {
+  /* Tight header on small screens: keep the mark and the register CTA,
+     drop the wordmark text and the secondary button. */
+  .wordmark span {
+    display: none;
+  }
+
+  .header-actions .btn-ghost {
+    display: none;
+  }
+
   .section {
     padding: 4rem 1.25rem;
   }
