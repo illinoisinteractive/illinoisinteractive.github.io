@@ -6,7 +6,7 @@ Pages site for Illinois Interactive (.org) — the temporary home while the full
 
 A single-page placeholder:
 
-- `index.html` — hero, "What we'll be" cards, "What's next" roadmap, contact
+- `index.html` — hero, "What we will become" cards, "What's next" roadmap (with the Oct 30 kick-off symposium), contact. The event registration link (Qualtrics form) appears in the hero and the Latest strip; it is static in the HTML, so swap or remove it after the event (both spots are marked with comments)
 - `styles.css` — dark theme (prairie gold + signal teal) with 8-bit accents (Press Start 2P, hard offset shadows, square corners), responsive, `prefers-reduced-motion` aware
 - `main.js` — scroll reveals + a pointer-aware canvas "playfield". Two swappable background engines share the palette: size-varied falling pieces — tetrominoes, pixel fragments, recognizable power-ups (mushroom, star, heart, ghost, gem) and tumbling rocks — plus a little player-ship that steers and dodges your cursor (default), or the archived first design — pixel nodes with drifting 8-bit sprites — open `index.html?bg=net` to revisit it
 

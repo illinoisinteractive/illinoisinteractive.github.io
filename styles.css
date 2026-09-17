@@ -239,6 +239,13 @@ footer {
   gap: 0.9rem;
 }
 
+/* Buttons are pixel-font (square monospace): allow the label to wrap
+   to two lines on narrow screens instead of clipping. */
+.actions .btn {
+  white-space: normal;
+  text-align: center;
+}
+
 .arcade-line {
   margin: 2.1rem 0 0;
   font: 400 0.62rem/1.9 var(--font-pixel);
@@ -281,10 +288,20 @@ footer {
   white-space: pre-line;
 }
 
+.announce-strip .btn {
+  flex: none;
+  align-self: center;
+}
+
 @media (max-width: 600px) {
   .announce-strip {
     flex-direction: column;
+    align-items: stretch;
     gap: 0.6rem;
+  }
+
+  .announce-strip .btn {
+    width: 100%;
   }
 }
 
